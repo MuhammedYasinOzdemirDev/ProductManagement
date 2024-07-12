@@ -11,11 +11,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 // MySQL DbContext
 builder.Services.AddDbContext<MySqlDataDbContext>(options =>
-    options.UseMySql(builder.Configuration.GetConnectionString("MySQLConnection"), new MySqlServerVersion(new Version(8, 0, 21))));
+    options.UseMySql(builder.Configuration.GetConnectionString("MySQLConnection"), new MySqlServerVersion(new Version(8, 0, 21)), b => b.MigrationsAssembly("ProductManagement.Infrastructure")));
             
 // PostgreSQL DbContext
 builder.Services.AddDbContext<PostreSqlDataDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQLConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQLConnection"), b => b.MigrationsAssembly("ProductManagement.Infrastructure")));
 
 // Dapper Contexts
 builder.Services.AddSingleton<MySqlDataContext>();
