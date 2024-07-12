@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ProductManagement.Infrastructure.Data_Context;
+using ProductManagement.Infrastructure.Persistence.Interfaces;
+using ProductManagement.Infrastructure.Persistence.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,10 @@ builder.Services.AddDbContext<PostreSqlDataDbContext>(options =>
 // Dapper Contexts
 builder.Services.AddSingleton<MySqlDataContext>();
 builder.Services.AddSingleton<PostreSqlDataContext>();
+
+//Repositories
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

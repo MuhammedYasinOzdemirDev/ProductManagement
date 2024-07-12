@@ -16,7 +16,7 @@ public class PostreSqlDataContext
         _connectionString = _configuration.GetConnectionString("PostgreSQLConnection");
     }
 
-    public IDbConnection CreateConnectionMySql()
+    public IDbConnection CreateConnectionPostreSql()
     {
         return new NpgsqlConnection(_connectionString);
     }
