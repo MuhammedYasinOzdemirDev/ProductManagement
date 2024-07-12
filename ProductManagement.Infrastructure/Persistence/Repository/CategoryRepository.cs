@@ -39,19 +39,12 @@ namespace ProductManagement.Infrastructure.Persistence.Repository;
                 var values = await mySqlConnection.QueryAsync<Category>(query);
                 return values;
             }
-
-            /* PostgreSQL
-            using (var postgreSqlConnection = _postgreSqlDataContext.CreateConnection())
-            {
-                var values = await postgreSqlConnection.QueryAsync<Category>(query);
-                return values;
-            }
-            */
         }
 
         public async Task AddCategoryAsync(Category category)
         {
             var query = "INSERT INTO Categories (Name) VALUES (@name)";
+            var query2 = "INSERT INTO public.\"Categories\" (\"Name\") VALUES (@name)";
             var parameters = new DynamicParameters();
             parameters.Add("@name", category.Name);
 
@@ -59,11 +52,18 @@ namespace ProductManagement.Infrastructure.Persistence.Repository;
             {
                 await mySqlConnection.ExecuteAsync(query, parameters);
             }
+
+            
+            using (var postreSqlConnection=_postgreSqlDataContext.CreateConnectionPostreSql())
+            {
+                await postreSqlConnection.ExecuteAsync(query2, parameters);
+            }
         }
 
         public async Task UpdateCategoryAsync(Category category)
         {
             var query = "UPDATE Categories SET Name = @name WHERE Id = @id";
+            var query2 = "UPDATE public.\"Categories\" SET \"Name\"=@name WHERE \"Id\" =@id";
             var parameters = new DynamicParameters();
             parameters.Add("@name", category.Name);
             parameters.Add("@id", category.Id);
@@ -72,17 +72,26 @@ namespace ProductManagement.Infrastructure.Persistence.Repository;
             {
                 await mySqlConnection.ExecuteAsync(query, parameters);
             }
+            using (var postreSqlConnection=_postgreSqlDataContext.CreateConnectionPostreSql())
+            {
+                await postreSqlConnection.ExecuteAsync(query2, parameters);
+            }
         }
 
         public async Task DeleteCategoryAsync(int id)
         {
             var query = "DELETE FROM Categories WHERE Id = @id";
+            var query2 = "DELETE FROM public.\"Categories\" WHERE \"Id\" = @id";
             var parameters = new DynamicParameters();
             parameters.Add("@id", id);
 
             using (var mySqlConnection = _mySqlDataContext.CreateConnectionMySql())
             {
                 await mySqlConnection.ExecuteAsync(query, parameters);
+            }
+            using (var postreSqlConnection=_postgreSqlDataContext.CreateConnectionPostreSql())
+            {
+                await postreSqlConnection.ExecuteAsync(query2, parameters);
             }
         }
     }

@@ -51,6 +51,8 @@ public class ProductRepository:IProductRepository
     {
         var query =
             "Insert Into Products (Name,Description,Price,StockQuantity,CategoryId) VALUES (@name,@description,@price,@stockQuantity,@categoryId)";
+        var query2 =
+            "INSERT INTO public.\"Products\" ( \"Name\", \"Description\", \"Price\", \"StockQuantity\", \"CategoryId\") VALUES (@name,@description,@price,@stockQuantity,@categoryId)"; 
         var parameters = new DynamicParameters();
         parameters.Add("@name",product.Name);
         parameters.Add("@description",product.Description);
@@ -62,12 +64,19 @@ public class ProductRepository:IProductRepository
         {
           await  mysqlConnection.ExecuteAsync(query, parameters);
         }
+
+        using (var postreSqlConnection=_postreSqlDataContext.CreateConnectionPostreSql())
+        {
+            postreSqlConnection.ExecuteAsync(query2, parameters);
+        }
     }
 
     public async Task UpdateProductAsync(Product product)
     {
         var query =
             "Update From Products SET Name=@name,Description=@description,Price=@price,StockQuantity=@stockQuantity,CategoryId=@categoryId Where Id=@id";
+        var query2 =
+            "UPDATE public.\"Products\" SET \"Name\"=@name, \"Description\"=@description, \"Price\"=@price, \"StockQuantity\"=@stockQuantity, \"CategoryId\"=@categoryId  WHERE \"Id\"=@id";
         var parameters = new DynamicParameters();
         parameters.Add("@name",product.Name);
         parameters.Add("@description",product.Description);
@@ -80,18 +89,27 @@ public class ProductRepository:IProductRepository
         {
             await  mysqlConnection.ExecuteAsync(query, parameters);
         }
+        using (var postreSqlConnection=_postreSqlDataContext.CreateConnectionPostreSql())
+        {
+            postreSqlConnection.ExecuteAsync(query2, parameters);
+        }
     }
 
     public async Task DeleteProductAsync(int id)
     {
         var query =
             "Delete From Products Where Id=@id";
+        var query2="DELETE FROM public.\"Products\" WHERE \"Id\"=@id"
         var parameters = new DynamicParameters();
       parameters.Add("@id",id);
 
         using (var mysqlConnection=_mySqlDataContext.CreateConnectionMySql())
         {
             await  mysqlConnection.ExecuteAsync(query, parameters);
+        }
+        using (var postreSqlConnection=_postreSqlDataContext.CreateConnectionPostreSql())
+        {
+            postreSqlConnection.ExecuteAsync(query2, parameters);
         }
     }
 }
